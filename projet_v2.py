@@ -4,6 +4,8 @@ import time,random
 
 pygame.init()
 
+#Initialisation des variabls et constantes pour tous le jeu  
+
 score = 0
 font = pygame.font.Font(None, 24)
 font1 = pygame.font.Font(None, 48)
@@ -29,9 +31,12 @@ RECOMMENCER = True
 fenetre = pygame.display.set_mode((hauteur,largeur))
 
 class Joueur(pygame.sprite.Sprite):
-
+''' Classe pour la gestion du joueur '''
     def __init__(self):
-        
+        '''
+        Input : None, Return : None
+        Initialisation du joueur avec l'héritage de la classe Sprite de pygame
+        '''
         pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load("player.gif")
@@ -40,16 +45,27 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.y = 750
     
     def move(self,n):
+        '''
+        Input : n = montant du déplassement, Return : None
+        Méthode gérant les mouvement du joueur
+        '''
         self.rect.x += n
 
     def reset(self):
+        '''
+        Input : None, Return : None
+        Méthode réinitialisant les coordonnées du joueur 
+        '''
         self.rect.x = 380
         self.rect.y = 750
         
 class Bullet(pygame.sprite.Sprite):
-    
+''' Classe pour la gestion des tirs du joueurs '''  
     def __init__(self):
-        
+        '''
+        Input : None, Return : None
+        Méthodes initialisant la Bullet héritant de la classe Sprite
+        '''
         pygame.sprite.Sprite.__init__(self)
  
         self.image = pygame.Surface([4, 10])
@@ -58,13 +74,19 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
  
     def update(self):
-        
+        '''
+        Input : None, Return : None
+        Méthode mettant a jour la Bullet
+        '''
         self.rect.y -= 15
 
 class Ennemi(pygame.sprite.Sprite):
-
+''' Classe pour la gestion des ennemis '''
     def __init__(self):
-        
+        '''
+        Input : None, Return : None
+        Initialisation d'un Ennemi héritant de la  classe Sprite
+        '''
         pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load("invader.gif")
@@ -75,9 +97,12 @@ class Ennemi(pygame.sprite.Sprite):
         self.tir = 0
 
 class Bullet_enemy(pygame.sprite.Sprite):
-    
+'''Classe pour la gestion des tirs ennemis '''
     def __init__(self,tireur):
-        
+        '''
+        Input : tireur = L'ennemi qui tier cette balle, Return : None
+        Initialisation d'un Tir Ennemi héritant de classe Sprite
+        '''
         pygame.sprite.Sprite.__init__(self)
  
         self.image = pygame.Surface([4, 10])
@@ -88,24 +113,17 @@ class Bullet_enemy(pygame.sprite.Sprite):
         self.tireur = tireur
         
     def update(self):
-        
+        '''
+        Input : None, Return : None
+        Méthode mettant a jour le tir ennemi
+        '''
         self.rect.y += 20
 
-        
-bullet_list = pygame.sprite.Group()
-bulletE = pygame.sprite.Group()
-all_sprite = pygame.sprite.Group()
-ennemis = pygame.sprite.Group()
-
-for i in range(4):
-    enemy = Ennemi()
-    ennemis.add(enemy)
-    all_sprite.add(enemy)
-    
-joueur = Joueur()
-all_sprite.add(joueur)
-
 def menu(fenetre):
+    '''
+    Input : fenetre = Fenetre pour affichage , Return : None
+    Fonction créant le menu de début
+    '''
     global MENU
     etape = 0
     while MENU:
@@ -126,11 +144,17 @@ def menu(fenetre):
         pygame.display.flip()
         
 def collision(vaisseau,bullet):
-    
+    '''
+    Input : vaisseau = Premier objet a comparé, bullet = Deuxiement objet a Comparé, Return : bool = True, si il y a collision, False sinon
+    Fonction gérant la collision entre 2 objets
+    '''
     return vaisseau.rect.colliderect(bullet.rect)
 
 def reset(bullet,bulletE,enemis,all_sprite,joueur):
-    
+    '''
+    Input : bullet,bulletE,enemis,all_sprite : Listes de sprites , joueur = L'Objet du Joueur, Return : None
+    Fonction qui réinitialise le joueur, les enemis et supprime les tirs
+    '''
     bullet.empty()
     bulletE.empty()
     all_sprite.empty()
@@ -144,13 +168,19 @@ def reset(bullet,bulletE,enemis,all_sprite,joueur):
     pygame.display.flip()
 
 def reset_jeu(bullet,bulletE,enemis,all_sprite,joueur):
+    '''
+    Input : bullet,bulletE,enemis,all_sprite : Liste de sprite, joueur = L'Objet du joueur, Return : None
+    Fonction qui réinitialise totalement le jeu après une défaite
+    '''
     reset(bullet,bulletE,enemis,all_sprite,joueur)
     global vies
     vies = 3
 
 def recommencer(fenetre,bullet,bulletE,enemis,all_sprite,joueur):
-   
-    
+   '''
+   Input : bullet,bulletE,enemis,all_sprite : Listes de sprite, joueur = L'Objet du joueur,fenetre = Objet pour l'affichage graphique Return : None
+   Fonction qui créer le menu pour recommencer
+   '''
     global RECOMMENCER
     global score
     text = font1.render(str(score),1,(255,255,255))
@@ -170,6 +200,22 @@ def recommencer(fenetre,bullet,bulletE,enemis,all_sprite,joueur):
         fenetre.blit(text,(350,290)) 
         pygame.display.flip()
 
+''' Liste de sprite permettant de les stocker et d'appliquer des fonction a chaque élément présent a l'intérieur'''      
+bullet_list = pygame.sprite.Group()
+bulletE = pygame.sprite.Group()
+all_sprite = pygame.sprite.Group()
+ennemis = pygame.sprite.Group()
+
+
+'''Création des ennemis et du joueur'''
+for i in range(4):
+    enemy = Ennemi()
+    ennemis.add(enemy)
+    all_sprite.add(enemy)
+    
+joueur = Joueur()
+all_sprite.add(joueur)
+        
 while boucle:
     
     pygame.display.flip()
