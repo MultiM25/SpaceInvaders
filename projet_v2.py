@@ -4,7 +4,7 @@ import time,random
 
 pygame.init()
 
-#Initialisation des variabls et constantes pour tous le jeu  
+#Initialisation des variabls et constantes pour tous le jeu
 
 score = 0
 font = pygame.font.Font(None, 24)
@@ -22,7 +22,7 @@ menu3 = pygame.image.load("menu3.gif")
 
 hauteur,largeur = 800,800
 
-boucle = True
+BOUCLE = True
 vies = 3
 sens = 1
 MENU = True
@@ -31,19 +31,19 @@ RECOMMENCER = True
 fenetre = pygame.display.set_mode((hauteur,largeur))
 
 class Joueur(pygame.sprite.Sprite):
-''' Classe pour la gestion du joueur '''
+    ''' Classe pour la gestion du joueur'''
     def __init__(self):
         '''
         Input : None, Return : None
         Initialisation du joueur avec l'héritage de la classe Sprite de pygame
         '''
         pygame.sprite.Sprite.__init__(self)
-        
+
         self.image = pygame.image.load("player.gif")
         self.rect = self.image.get_rect()
         self.rect.x = 380
         self.rect.y = 750
-    
+
     def move(self,n):
         '''
         Input : n = montant du déplassement, Return : None
@@ -54,25 +54,25 @@ class Joueur(pygame.sprite.Sprite):
     def reset(self):
         '''
         Input : None, Return : None
-        Méthode réinitialisant les coordonnées du joueur 
+        Méthode réinitialisant les coordonnées du joueur
         '''
         self.rect.x = 380
         self.rect.y = 750
-        
+
 class Bullet(pygame.sprite.Sprite):
-''' Classe pour la gestion des tirs du joueurs '''  
+    ''' Classe pour la gestion des tirs du joueurs '''
     def __init__(self):
         '''
         Input : None, Return : None
         Méthodes initialisant la Bullet héritant de la classe Sprite
         '''
         pygame.sprite.Sprite.__init__(self)
- 
+
         self.image = pygame.Surface([4, 10])
         self.image.fill((255,255,255))
- 
+
         self.rect = self.image.get_rect()
- 
+
     def update(self):
         '''
         Input : None, Return : None
@@ -81,14 +81,14 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y -= 15
 
 class Ennemi(pygame.sprite.Sprite):
-''' Classe pour la gestion des ennemis '''
+    ''' Classe pour la gestion des ennemis '''
     def __init__(self):
         '''
         Input : None, Return : None
         Initialisation d'un Ennemi héritant de la  classe Sprite
         '''
         pygame.sprite.Sprite.__init__(self)
-        
+
         self.image = pygame.image.load("invader.gif")
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(20,750)
@@ -97,21 +97,21 @@ class Ennemi(pygame.sprite.Sprite):
         self.tir = 0
 
 class Bullet_enemy(pygame.sprite.Sprite):
-'''Classe pour la gestion des tirs ennemis '''
+    '''Classe pour la gestion des tirs ennemis '''
     def __init__(self,tireur):
         '''
         Input : tireur = L'ennemi qui tier cette balle, Return : None
         Initialisation d'un Tir Ennemi héritant de classe Sprite
         '''
         pygame.sprite.Sprite.__init__(self)
- 
+
         self.image = pygame.Surface([4, 10])
         self.image.fill((255,0,0))
- 
+
         self.rect = self.image.get_rect()
 
         self.tireur = tireur
-        
+
     def update(self):
         '''
         Input : None, Return : None
@@ -125,24 +125,25 @@ def menu(fenetre):
     Fonction créant le menu de début
     '''
     global MENU
+    global BOUCLE
     etape = 0
     while MENU:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                
+                BOUCLE = False
+                return
             if event.type == pygame.KEYDOWN:
                 if event.key == K_SPACE:
                     if etape == 1:
                         MENU = False
                     if etape == 0:
                         etape = 1
-        if etape == 0:            
+        if etape == 0:
             fenetre.blit(menu1,(0,0))
         if etape == 1:
             fenetre.blit(menu2,(0,0))
         pygame.display.flip()
-        
+
 def collision(vaisseau,bullet):
     '''
     Input : vaisseau = Premier objet a comparé, bullet = Deuxiement objet a Comparé, Return : bool = True, si il y a collision, False sinon
@@ -177,30 +178,31 @@ def reset_jeu(bullet,bulletE,enemis,all_sprite,joueur):
     vies = 3
 
 def recommencer(fenetre,bullet,bulletE,enemis,all_sprite,joueur):
-   '''
-   Input : bullet,bulletE,enemis,all_sprite : Listes de sprite, joueur = L'Objet du joueur,fenetre = Objet pour l'affichage graphique Return : None
-   Fonction qui créer le menu pour recommencer
-   '''
+    '''
+    Input : bullet,bulletE,enemis,all_sprite : Listes de sprite, joueur = L'Objet du joueur,fenetre = Objet pour l'affichage graphique Return : None
+    Fonction qui créer le menu pour recommencer
+    '''
+    global BOUCLE
     global RECOMMENCER
     global score
     text = font1.render(str(score),1,(255,255,255))
-    
+
     while RECOMMENCER:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                
+                BOUCLE = False
+                return
             if event.type == pygame.KEYDOWN:
                 if event.key == K_SPACE:
                     reset_jeu(bullet,bulletE,enemis,all_sprite,joueur)
                     score = 0
                     RECOMMENCER =  False
-                  
+
         fenetre.blit(menu3,(0,0))
-        fenetre.blit(text,(350,290)) 
+        fenetre.blit(text,(350,290))
         pygame.display.flip()
 
-''' Liste de sprite permettant de les stocker et d'appliquer des fonction a chaque élément présent a l'intérieur'''      
+''' Liste de sprite permettant de les stocker et d'appliquer des fonction a chaque élément présent a l'intérieur'''
 bullet_list = pygame.sprite.Group()
 bulletE = pygame.sprite.Group()
 all_sprite = pygame.sprite.Group()
@@ -212,12 +214,14 @@ for i in range(4):
     enemy = Ennemi()
     ennemis.add(enemy)
     all_sprite.add(enemy)
-    
+
 joueur = Joueur()
 all_sprite.add(joueur)
-        
-while boucle:
-    
+
+while BOUCLE:
+    #Boucle Principale
+
+    '''Affichage de tous les objets sur l'écran'''
     pygame.display.flip()
     fenetre.fill((0,0,0))
     fenetre.blit(background,(0,0))
@@ -230,10 +234,12 @@ while boucle:
     fenetre.blit(text2,(620,15))
     fenetre.blit(text,(5,5))
     menu(fenetre)
-    
+
+
+    '''Gestion des évènements'''
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            boucle = False
+            BOUCLE = False
         if event.type == pygame.KEYDOWN:
             if event.key == K_RIGHT:
                 if joueur.rect.x < 770:
@@ -242,16 +248,16 @@ while boucle:
                 if joueur.rect.x > 10:
                     joueur.move(-25)
             if event.key == K_UP:
-                
+
                 bullet = Bullet()
-                
+
                 bullet.rect.x = joueur.rect.x + 12
                 bullet.rect.y = joueur.rect.y
 
                 all_sprite.add(bullet)
                 bullet_list.add(bullet)
-            
-                
+
+    '''Gestion des ennemis (tirs,collision)'''
     for enemy in ennemis:
         if enemy.tir == 0:
             bullet = Bullet_enemy(enemy)
@@ -260,9 +266,9 @@ while boucle:
             bullet.rect.x = enemy.rect.x + 12
             bullet.rect.y = enemy.rect.y + 12
             enemy.tir = 1
-            
+
         if enemy.rect.y > 750:
-            boucle =  False
+            BOUCLE =  False
         if enemy.rect.x + 5 * sens < 780 and enemy.rect.x + 5 * sens > 0:
             enemy.rect.x += 5 * sens
         else:
@@ -270,7 +276,7 @@ while boucle:
                 enemy.rect.y += 25
             sens = sens * -1
         if collision(enemy,joueur):
-            boucle = False
+            BOUCLE = False
         for bul in bullet_list:
             if collision(enemy,bul):
                 bullet_list.remove(bul)
@@ -282,7 +288,7 @@ while boucle:
                 all_sprite.add(new_enemy)
                 score += 20
                 break
-                
+    '''Gestion des collisions des tir ennemis'''
     for bul in bulletE:
         if bul.rect.y > 800:
             bul.tireur.tir = 0
@@ -295,10 +301,16 @@ while boucle:
                 break
             else:
                 break
+
+    '''Suppression des tir alliés sortit de l'écran'''
+    for bul in bullet_list:
+        if bul.rect.y < 0:
+            bullet_list.remove(bul)
+            all_sprite.remove(bul)
     if vies == 0:
         recommencer(fenetre,bullet_list,bulletE,enemy,all_sprite,joueur)
-    
-    
+
+
     time.sleep(0.1)
 
 pygame.quit()
